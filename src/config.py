@@ -1,0 +1,10 @@
+RANDOM_SEED = 42
+PRE_TRAINED_MODEL_NAME = 'bert-base-cased'
+MAX_LEN = 150
+BATCH_SIZE = 16
+EPOCHS = 10
+LEARNING_RATE = 2e-5
+DROPOUT_PROB = 0.3
+NUM_CLASSES = 4
+DATA_PATH = '../data/raw/'
+MODEL_PATH = '../models/checkpoints/'
