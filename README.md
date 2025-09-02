@@ -105,8 +105,11 @@ news-classifier/
 
 ## 📊 Dataset
 
+<!-- Dataset from: https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset/code/data -->
+<!-- Sentiment Analysis tutorial from: https://curiousily.com/posts/sentiment-analysis-with-bert-and-hugging-face-using-pytorch-and-python/ -->
+
 **TODO**: 
-- [ ] Download and prepare AG News or BBC News dataset
+- [ ] Download and prepare AG News or BBC News dataset 
 - [ ] Implement data preprocessing pipeline
 - [ ] Create train/validation/test splits
 
