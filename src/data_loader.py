@@ -3,17 +3,24 @@ from torch.utils.data import Dataset, DataLoader
 from transformers import BertTokenizer
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from .config import *
 
 class NewsArticlesDataset(Dataset):
+    """Custom dataset for news article classification"""
 
     def __init__(self, descriptions, targets, tokenizer, max_len):
-        self.descriptions = descriptions    # array of inputs
-        self.targets = targets              # array of outputs
+        """
+        :param descriptions: array of text descriptions
+        :param targets: array of class labels
+        :param tokenizer: BERT tokenizer instance
+        :param max_len: maximum sequence length
+        """
+
+        self.descriptions = descriptions
+        self.targets = targets
         self.tokenizer = tokenizer
         self.max_len = max_len
 
-    # NOTE. Since our NewsArticleDataset class inherits from the Dataset class of
-    # torch.utils.data, note that this class requires the methods __len__ and __getitem__.
     def __len__(self):
         return len(self.descriptions)
 
@@ -39,7 +46,19 @@ class NewsArticlesDataset(Dataset):
             'targets': torch.tensor(target, dtype=torch.long)
         }
 
+
+
 def create_data_loader(df, tokenizer, max_len, batch_size):
+    """
+    Create DataLoader from a dataframe
+
+    :param df: dataframe columns corresponding to descriptions and targets
+    :param tokenizer: BERT tokenizer instance
+    :param max_len: maximum sequence length
+    :param batch_size: batch size for DataLoader
+    :return: DataLoader object
+    """
+
     ds = NewsArticlesDataset(
         descriptions=df['Description'].to_numpy(),
         targets=df['Class Index'].to_numpy(),
@@ -53,22 +72,42 @@ def create_data_loader(df, tokenizer, max_len, batch_size):
         num_workers=0               # NOTE: Causes errors on Windows unless zero
     )
 
-def get_data_loaders(train_path, test_path, tokenizer, max_len, batch_size, val_split=0.05, random_seed=42):
-    """Load data and create training/validation/test dataloaders"""
+def load_and_split_data(val_split=0.05):
+    """
+    Load data; create train / validation / test split
 
-    df_train = pd.read_csv(train_path)
-    df_test = pd.read_csv(test_path)
+    :param val_split: portion of training data to be used for validation
+    :return: tuple of training, validation and test dataframes
+    """
+
+    df_train = pd.read_csv(TRAIN_DATA_PATH)
+    df_test = pd.read_csv(TEST_DATA_PATH)
+
+    # NOTE. Convert to 0-indexing which is required for cross-entropy loss
+    df_train['Class Index'] = df_train['Class Index'] - 1
+    df_test['Class Index'] = df_test['Class Index'] - 1
 
     df_train, df_val = train_test_split(
-        df_train,
-        test_size=val_split,
-        random_seed=random_seed
+        df_train, test_size=val_split, random_state=RANDOM_SEED
     )
 
-    train_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
-    val_loader = create_data_loader(df_val, tokenizer, max_len, batch_size)
-    test_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
+    return df_train, df_val, df_test
 
-    return train_loader, val_loader, test_loader, len(df_train), len(df_val), len(df_test)
+def get_data_loaders(tokenizer=None):
+    """
+    Create DataLoaders for training, validation and testing
 
-    # NOTE: Returns each individual dataloader as well as the number of tuples in each
+    :param tokenizer: BERT tokenizer instance
+    :return: tuple of training, validation and test DataLoaders
+    """
+
+    if tokenizer is None:
+        tokenizer = BertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+
+    df_train, df_val, df_test = load_and_split_data()
+
+    train_loader = create_data_loader(df_train, tokenizer, MAX_LEN, BATCH_SIZE)
+    val_loader = create_data_loader(df_val, tokenizer, MAX_LEN, BATCH_SIZE)
+    test_loader = create_data_loader(df_test, tokenizer, MAX_LEN, BATCH_SIZE)
+
+    return train_loader, val_loader, test_loader
