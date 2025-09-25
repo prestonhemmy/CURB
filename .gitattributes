@@ -1,0 +1,5 @@
+*.py    linguist-language=Python
+*.html  linguistic-language=HTML
+*.js    linguistic-language=JavaScript
+
+notebooks/*.ipynb linguist-documentation
