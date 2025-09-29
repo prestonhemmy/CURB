@@ -19,8 +19,8 @@ class NewsClassifierService:
         :param model_path: path to saved model
         :return: True if model is loaded and False otherwise
         """
-        print(f"Loading model from {model_path}... \nEstimated wait time: 10 seconds")
-        start_time = time.time()
+        # print(f"Loading model from {model_path}... \nEstimated wait time: 10 seconds")
+        # start_time = time.time()
 
         try:
             self.tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
@@ -32,8 +32,8 @@ class NewsClassifierService:
 
             self.is_loaded = True
 
-            load_time = time.time() - start_time
-            print(f"Model loaded in {load_time:.2f} seconds")
+            # load_time = time.time() - start_time
+            # print(f"Model loaded in {load_time:.2f} seconds")
 
             # model service warm up
             self._warmup()
@@ -110,7 +110,8 @@ class NewsClassifierService:
             'input_text': text[:100] + '...' if len(text) > 100 else text
         }
 
-    def validate(self, text):
+    @staticmethod
+    def validate(text):
         """Function-level validation of news text"""
         # falsy and type and whitespace checking
         if not text or not isinstance(text, str) or text.strip() == "":
