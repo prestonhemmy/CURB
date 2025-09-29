@@ -1,5 +1,5 @@
 *.py    linguist-language=Python
 *.html  linguistic-language=HTML
 *.js    linguistic-language=JavaScript
-
 notebooks/*.ipynb linguist-documentation
+models/checkpoints/best_model_state.pt filter=lfs diff=lfs merge=lfs -text

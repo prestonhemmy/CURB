@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>News Classifier</title>
+    <style>
+        /* Container layout */
+        .container { /* center everything */ }
+        .input-section { /* textarea styling */ }
+        .results-section { /* hidden by default */ }
+        .probability-bar { /* visual bars for each category */ }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>News Article Classifier</h1>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <textarea id="newsText" placeholder="Paste your news article here..."></textarea>
+            <button onclick="classifyNews()">Classify</button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="results-section hidden">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <script>
+        async function classifyNews() {
+            // 1. Get text from textarea
+            // 2. Show loading state
+            // 3. Make API call
+            // 4. Display results
+            // 5. Handle errors
+        }
+
+        function displayResults(data) {
+            // 1. Show main prediction
+            // 2. Show confidence
+            // 3. Show all probabilities as bars
+        }
+    </script>
+</body>
+</html>
