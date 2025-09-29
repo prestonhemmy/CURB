@@ -1,7 +1,6 @@
 import torch
 from torch import nn
 from torch.optim import AdamW
-from torch.xpu import device
 from transformers import get_linear_schedule_with_warmup, BertTokenizer
 from collections import defaultdict
 import numpy as np

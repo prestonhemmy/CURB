@@ -25,4 +25,9 @@ TRAIN_DATA_PATH = 'data/raw/train.csv'
 TEST_DATA_PATH = 'data/raw/test.csv'
 MODEL_PATH = 'models/checkpoints/best_model_state.pt'
 
-CLASS_NAMES = ['World', 'Sports', 'Business', 'Sci/Tech']
+CLASS_NAMES = [
+    'World',
+    'Sports',
+    'Business',
+    'Science'
+]
