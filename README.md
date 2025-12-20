@@ -1,4 +1,4 @@
-# CURB
+# CURB: A Refined BERT Implementation for Sequence Classification using PyTorch & HuggingFace
 
 CURB or *Classification Using Refined BERT* is a text classification model supporting API integration and exhibiting 94%
 accuracy. CURB categorizes news into **World**, **Sports**, **Business**, and **Science/Technology** categories.
