@@ -124,8 +124,11 @@ docker build -t news-classifier .
 docker run -p 8000:8000 news-classifier
 ```
 
-[//]: # (TODO: Optional)
-[//]: # (## License)
 
-[//]: # ()
-[//]: # (MIT)
+## Author
+
+**Preston Hemmy**
+
+GitHub: [@prestonhemmy](https://github.com/prestonhemmy)
+
+LinkedIn: [Preston Hemmy](https://linkedin.com/in/prestonhemmy)
