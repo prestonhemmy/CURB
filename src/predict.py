@@ -11,6 +11,8 @@ class NewsClassifierService:
         self.model = None
         self.tokenizer = None
         self.is_loaded = False
+        self.model_load_time = None
+        self.model_load_error = None
 
     def load_model(self, model_path):
         """
@@ -19,8 +21,7 @@ class NewsClassifierService:
         :param model_path: path to saved model
         :return: True if model is loaded and False otherwise
         """
-        # print(f"Loading model from {model_path}... \nEstimated wait time: 10 seconds")
-        # start_time = time.time()
+        start = time.time()
 
         try:
             self.tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
@@ -32,8 +33,7 @@ class NewsClassifierService:
 
             self.is_loaded = True
 
-            # load_time = time.time() - start_time
-            # print(f"Model loaded in {load_time:.2f} seconds")
+            self.model_load_time = time.time() - start
 
             # model service warm up
             self._warmup()
@@ -44,6 +44,7 @@ class NewsClassifierService:
             print(f"Failed to load model: {e} .")
 
             self.is_loaded = False
+            self.model_load_error = e
 
             return False
 
@@ -136,10 +137,6 @@ class NewsClassifierService:
             _ = self.predict(dummy_text)
 
             print("Model warmup complete")
-
-
-# global singleton
-classifier_service = NewsClassifierService()
 
 
 # global singleton
