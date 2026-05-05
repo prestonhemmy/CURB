@@ -1,20 +1,25 @@
 # CURB
 
-CURB or *Classification Using Refined BERT* is a text classification model supporting API integration and exhibiting 94%
-accuracy. CURB categorizes news into **World**, **Sports**, **Business**, and **Science/Technology** categories.
+*Classification Using Refined BERT* — a fine-tuned BERT model for news article 
+classification, served via a FastAPI backend. Categorizes text into **World**, 
+**Sports**, **Business**, and **Science/Technology** with ~94% accuracy on 
+the AG News dataset.
+
+<!-- TODO: Add demo gif once frontend is implemented -->
+
 
 ## Demo
 
-```python
-# Example API Request
-POST http://localhost:8000/predict
-{
-  "text": "Apple unveiled its latest iPhone model today, featuring groundbreaking AI capabilities..."
-}
+```bash
+# Classify a news article
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Apple unveiled its latest iPhone model today, featuring groundbreaking AI capabilities..."}'
+```
 
-# Response
+```json
 {
-  "text": "",
+  "text": "Apple unveiled its latest iPhone model today...",
   "category": "Science",
   "confidence": 0.943,
   "all_probabilities": {
@@ -27,28 +32,75 @@ POST http://localhost:8000/predict
 }
 ```
 
+
 ## Tech Stack
 
 - **Model**: BERT (bert-base-cased) fine-tuned for news classification
 - **Backend**: FastAPI with async support
-- **Frontend**: Vanilla JavaScript with real-time visualization
 - **ML Framework**: PyTorch + HuggingFace Transformers
+- **Dataset**: [AG News](https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset)
+
+<!-- TODO: Add this once frontend is implemented -->
+<!-- - **Frontend**: Vanilla JavaScript with real-time probability visualization -->
+
 
 ## Quick Start
 
+### Prerequisites
+
+- Python 3.10+
+- CUDA-compatible GPU (recommended) or CPU
+- ~1 GB disk space (model weights + dependencies)
+
+### Install
+
 ```bash
-# Install
-git clone https://github.com/prestonhemmy/news-classifier.git
-cd news-classifier
+git clone https://github.com/prestonhemmy/CURB.git
+cd CURB
+python -m venv .venv
+source .venv\Scripts\activate  # macOS/Linux: .venv/bin/activate
 pip install -r requirements.txt
-
-# Run
-python -m uvicorn app.main:app --reload
-
-# Access
-API: http://localhost:8000/docs
-Web: http://localhost:8000/static/index.html
 ```
+
+### Train
+
+A pre-trained checkpoint is not included due to file size. Train the model to 
+generate one:
+
+```bash
+python -m src.train
+```
+
+This saves the checkpoint to `models/checkpoints/best_model_state.pt`. Training 
+takes ~3 hours on an NVIDIA RTX 4050 GPU.
+
+<!-- TODO: Validate the training time of ~3 hrs -->
+
+### Run
+
+```bash
+uvicorn app.main:app --reload
+```
+
+<!-- TODO: Update once frontend is served -->
+The API is available at `http://localhost:8000` with interactive docs at
+[`/docs`](http://localhost:8000/docs).
+
+### Test
+
+```bash
+# Health check
+curl http://localhost:8000/health
+
+# Classify text
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"text": "The stock market surged today as investors reacted to strong earnings."}'
+
+# Run test suite
+pytest tests/
+```
+
 
 ## Architecture
 
@@ -56,76 +108,71 @@ Web: http://localhost:8000/static/index.html
 Input Text → BERT Tokenizer → Fine-tuned BERT → Softmax → Category + Confidence
 ```
 
-### Key Features
-
-[//]: # (TODO: Validate this result - **Sub-50ms inference** - Optimized with model warmup and singleton pattern)
-- **Input validation** - Length limits, language detection, whitespace checks
-- **Production ready** - Health checks, CORS support, error handling
-
-[//]: # (TODO: Implement this or similar - **Visual interface** - Real-time probability distribution charts)
-
-## Project Structure
-
 ```
-news-classifier/
+CURB/
 ├── app/
-│   ├── main.py              # FastAPI endpoints
+│   ├── main.py                # FastAPI endpoints and lifespan
 │   └── static/
-│       └── index.html       # Web interface
+│       └── index.html         # Web interface (planned)
 ├── src/
-│   ├── model.py             # BERT architecture
-│   ├── predict.py           # Inference service
-│   └── config.py            # Model configuration
-└── models/
-    └── best_model_state.pt  # Fine-tuned weights
+│   ├── config.py              # Hyperparameters and paths
+│   ├── model.py               # BERT + classification head
+│   ├── data_loader.py         # AG News data pipeline
+│   ├── train.py               # Training loop with early stopping
+│   ├── predict.py             # Inference service (singleton)
+│   └── utils.py               # Helpers
+├── notebooks/
+│   ├── 01_data_exploration.ipynb
+│   ├── 02_bert_tutorial.ipynb
+│   └── 03_model_evaluation.ipynb
+├── models/
+│   └── checkpoints/           # Saved model weights (.gitignored)
+└── data/
+    └── raw/                   # AG News CSVs (.gitignored)
 ```
 
-## Performance
-
-[//]: # (TODO: Validate the F1 score, inference time and model size; Possibly add precison/recall metrics)
-
-| Metric | Score |
-|--------|-------|
-| Accuracy | 94.2% |
-| F1 Score | 0.94 |
-| Inference Time | ~45ms |
-| Model Size | 438MB |
-
-## Training Details
-
-- **Dataset**: AG News (120,000 articles)
-- **Architecture**: BERT base with custom classification head
-- **Training Time**: ~3 hours on NVIDIA GeForce RTX 4050 GPU
-- **Optimizer**: AdamW with linear warmup
-
-[//]: # (TODO: Validate this result - **Best Validation Loss**: 0.156)
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | API status |
-| `/health` | GET | Model health check |
-| `/predict` | POST | Classify news text |
+| Endpoint   | Method | Description                           |
+|------------|--------|---------------------------------------|
+| `/`        | GET    | API status and model info             |
+| `/health`  | GET    | Model diagnostics (load time, errors) |
+| `/predict` | POST   | Classify news text                    |
+| `/docs`    | GET    | Interactive Swagger documentation     |
 
-## Development
+<!-- TODO: Add batch endpoint row once implemented -->
+<!-- | `/predict-batch` | POST | Classify up to 10 articles | -->
 
-```bash
-# Run tests
-pytest tests/
 
-# TODO: (Optional) Add support for the training model
-# Training (optional - pretrained model included)
-#python src/train.py --epochs 3 --batch_size 16
+## Performance
 
-# TODO: Planned
-# Docker deployment
-docker build -t news-classifier .
-docker run -p 8000:8000 news-classifier
-```
+<!-- TODO: Validate all metrics after retraining -->
 
-[//]: # (TODO: Optional)
-[//]: # (## License)
+| Metric         | Score   |
+|----------------|---------|
+| Accuracy       | ~94%    |
+| F1 Score       | ~0.94   |
+| Inference Time | ~45ms   |
+| Model Size     | ~438 MB |
 
-[//]: # ()
-[//]: # (MIT)
+
+## Training Details
+
+- **Epochs**: 10 (with early stopping, patience 3)
+- **Batch Size**: 16
+- **Max Sequence Length**: 150 tokens
+- **Optimizer**: AdamW (lr = 2e-5)
+- **Scheduler**: Linear warmup
+- **Hardware**: NVIDIA GeForce RTX 4050 (6 GB VRAM)
+
+<!-- TODO: Add best validation loss and training curves once retraining is complete -->
+
+
+## Author
+
+**Preston Hemmy**
+
+GitHub: [@prestonhemmy](https://github.com/prestonhemmy)
+
+LinkedIn: [Preston Hemmy](https://linkedin.com/in/prestonhemmy)
