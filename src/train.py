@@ -150,8 +150,8 @@ def train_model(model=None, save_best=True):
 
     optimizer = AdamW(model.parameters(), lr=LEARNING_RATE)
 
-    n_train = len(train_loader)
-    n_val = len(val_loader)
+    n_train = len(train_loader.dataset)
+    n_val = len(val_loader.dataset)
     total_steps = n_train * EPOCHS
 
     scheduler = get_linear_schedule_with_warmup(
@@ -193,7 +193,7 @@ def train_model(model=None, save_best=True):
         history['val_loss'].append(val_loss)
 
         if val_acc > best_accuracy and save_best:
-            torch.save(model.state_dict(), 'best_model_state.pt')
+            torch.save(model.state_dict(), MODEL_PATH)
             best_accuracy = val_acc
 
         if early_stop(val_acc):

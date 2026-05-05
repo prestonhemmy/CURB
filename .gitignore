@@ -15,9 +15,9 @@ ENV/
 *.iws
 
 # Model and Data
-models/*.pt
-models/*.bin
-models/*.pth
+**/*.pt
+**/*.bin
+**/*.pth
 data/raw/
 data/processed/
 *.csv

@@ -1,57 +1,43 @@
 from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager, AsyncExitStack
-
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
-from typing import Dict, Optional
-import torch
-from sentry_sdk.utils import to_string
-from starlette.responses import HTMLResponse
-from transformers import BertTokenizer
+from typing import Dict
 
-from src import create_model
-from src.model import TopicClassifier
 from src.config import *
+from src.predict import classifier_service
 
 import time
-
-from src.predict import classifier_service
 
 
 # load saved model (once) when server starts
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    # on startup:
-
-    global model_load_time, model_load_error
+    # On Startup:
 
     print ("\n" + "=" * 50)
     print("Starting server...\nLoading model...")
     print("Estimated wait time: 3 seconds.")
     print("\n" + "=" * 50)
 
-    start = time.time()
     success = classifier_service.load_model(MODEL_PATH)
-    model_load_time = time.time() - start
 
     print()
 
     if success:
-        print(f"Model loaded in {model_load_time:.2f} seconds.")
+        print(f"Model loaded in {classifier_service.model_load_time:.2f} seconds.")
         print("You may now access the API at http://127.0.0.1:8000")
         print("See interactive docs at http://127.0.0.1:8000/docs")
 
     else:
-        model_load_error = "Failed to load model (see logs)."
-        print(f"Error: {model_load_error}")
+        print(f"Failed to load model: {classifier_service.model_load_error}")
 
     print()
 
     yield   # transfer control to app
 
-    # on shutdown:
+    # On Shutdown:
 
     # clean up
     print("\n" + "=" * 50)
@@ -66,7 +52,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# TODO: Add CORS middleware (for frontend integration)
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 # request / response models
 class TextRequest(BaseModel):
@@ -89,10 +81,6 @@ class PredictionResponse(BaseModel):
     all_probabilities: Dict[str, float]
     processing_time: float
 
-# globals
-model_load_time : Optional[float] = None
-model_load_error: Optional[str] = None
-
 # endpoints
 @app.get("/")
 async def root():
@@ -105,9 +93,8 @@ async def root():
     return {
         "message": "News Classifier API",
         "status": "MODEL LOADED" if classifier_service.is_loaded else "MODEL NOT LOADED",
-        # TODO: model_loaded,
-        #       model_load_time,
-        #       instructions (Optional)
+        "model_loaded": classifier_service.is_loaded,
+        "model_load_time": classifier_service.model_load_time,
         "endpoints": {
             "GET /": "This message",
             "GET /health": "Diagnostic health summary",
@@ -125,8 +112,9 @@ async def health():
 
     return {
         "status": "healthy" if classifier_service.is_loaded else "unhealthy",
-        "model_loaded": classifier_service.is_loaded
-        # TODO: model_load_time, error, available_classes (Optional)
+        "model_loaded": classifier_service.is_loaded,
+        "model_load_time": classifier_service.model_load_time,
+        "error": classifier_service.model_load_error,
     }
 
 @app.post("/predict", response_model=PredictionResponse)
@@ -142,16 +130,21 @@ async def predict(request: TextRequest):
     if not classifier_service.is_loaded:
         raise HTTPException(status_code=503, detail="Model not yet loaded. Try again later.")
 
-    # TODO: init prediction time tracker
+    start = time.time()
 
     # run prediction
-    result = classifier_service.predict(request.text)
+    try:
+        result = classifier_service.predict(request.text)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
-    # TODO: generic error handling
-
-    # TODO: add processing time to response
-
-    return result
+    return PredictionResponse(
+        text=result["input_text"],
+        category=result["predicted_class"],
+        confidence=result["confidence"],
+        all_probabilities=result["all_probabilities"],
+        processing_time=time.time() - start,
+    )
 
 # TODO: Add support for user batch input (capped at 10)
 #  @app.post("/predict-batch")
