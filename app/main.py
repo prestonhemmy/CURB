@@ -26,7 +26,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     print()
 
     if success:
-        print(f"Model loaded in {classifier_service.model:.2f} seconds.")
+        print(f"Model loaded in {classifier_service.model_load_time:.2f} seconds.")
         print("You may now access the API at http://127.0.0.1:8000")
         print("See interactive docs at http://127.0.0.1:8000/docs")
 
@@ -93,7 +93,7 @@ async def root():
     return {
         "message": "News Classifier API",
         "status": "MODEL LOADED" if classifier_service.is_loaded else "MODEL NOT LOADED",
-        "model_loaded": classifier_service.model_loaded,
+        "model_loaded": classifier_service.is_loaded,
         "model_load_time": classifier_service.model_load_time,
         "endpoints": {
             "GET /": "This message",
