@@ -1,4 +1,4 @@
-# CURB
+# CURB: A Refined BERT Implementation for Sequence Classification using PyTorch & HuggingFace
 
 *Classification Using Refined BERT* — a fine-tuned BERT model for news article 
 classification, served via a FastAPI backend. Categorizes text into **World**, 
@@ -167,6 +167,11 @@ CURB/
 - **Hardware**: NVIDIA GeForce RTX 4050 (6 GB VRAM)
 
 <!-- TODO: Add best validation loss and training curves once retraining is complete -->
+
+
+## Author
+
+**Preston Hemmy**
 
 
 ## Author
