@@ -5,7 +5,7 @@ classification, served via a FastAPI backend. Categorizes text into **World**,
 **Sports**, **Business**, and **Science/Technology** with ~94% accuracy on 
 the AG News dataset.
 
-<!-- TODO: Add demo gif once frontend is implemented -->
+<!-- TODO: Add demo gif of either run_demo CLI or FastAPI-backed API -->
 
 
 ## Demo
@@ -40,9 +40,6 @@ curl -X POST http://localhost:8000/predict \
 - **ML Framework**: PyTorch + HuggingFace Transformers
 - **Dataset**: [AG News](https://www.kaggle.com/datasets/amananandrai/ag-news-classification-dataset)
 
-<!-- TODO: Add this once frontend is implemented -->
-<!-- - **Frontend**: Vanilla JavaScript with real-time probability visualization -->
-
 
 ## Quick Start
 
@@ -72,17 +69,20 @@ python -m src.train
 ```
 
 This saves the checkpoint to `models/checkpoints/best_model_state.pt`. Training 
-takes ~3 hours on an NVIDIA RTX 4050 GPU.
+takes ~3-4 hours on an NVIDIA RTX 4050 GPU.
 
-<!-- TODO: Validate the training time of ~3 hrs -->
 
 ### Run
 
 ```bash
+# Development (with hot reload)
 uvicorn app.main:app --reload
+
+# Or use the provided scripts
+./run_dev.sh   # development with reload
+./run_prod.sh  # production with 4 workers
 ```
 
-<!-- TODO: Update once frontend is served -->
 The API is available at `http://localhost:8000` with interactive docs at
 [`/docs`](http://localhost:8000/docs).
 
@@ -147,14 +147,32 @@ CURB/
 
 ## Performance
 
-<!-- TODO: Validate all metrics after retraining -->
+Evaluated on the AG News test set (7,600 articles).
 
-| Metric         | Score   |
-|----------------|---------|
-| Accuracy       | ~94%    |
-| F1 Score       | ~0.94   |
-| Inference Time | ~45ms   |
-| Model Size     | ~438 MB |
+<table>
+<tr><th>Model Metrics</th>
+<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<th>Per-Class Results</th></tr>
+<tr><td>
+
+| Metric         | Score  |
+|----------------|--------|
+| Accuracy       | 94.0%  |
+| Macro F1       | 0.94   |
+| Inference Time | ~105ms |
+| Model Size     | 413 MB |
+
+</td><td>
+</td><td>
+
+| Category | Precision | Recall | F1   |
+|----------|-----------|--------|------|
+| World    | 0.94      | 0.96   | 0.95 |
+| Sports   | 0.99      | 0.97   | 0.98 |
+| Business | 0.92      | 0.88   | 0.90 |
+| Science  | 0.90      | 0.93   | 0.91 |
+
+</td></tr> </table>
 
 
 ## Training Details
@@ -166,12 +184,17 @@ CURB/
 - **Scheduler**: Linear warmup
 - **Hardware**: NVIDIA GeForce RTX 4050 (6 GB VRAM)
 
-<!-- TODO: Add best validation loss and training curves once retraining is complete -->
+![Training curves](assets/training_curves.png)
 
+### Evaluation
 
-## Author
+```bash
+# Per-class metrics (precision, recall, F1)
+python -m src.evaluate
 
-**Preston Hemmy**
+# Generate training curves
+python -m src.plot_training
+```
 
 
 ## Author
