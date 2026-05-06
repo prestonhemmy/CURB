@@ -4,6 +4,9 @@ from torch.optim import AdamW
 from transformers import get_linear_schedule_with_warmup, BertTokenizer
 from collections import defaultdict
 import numpy as np
+import json
+import os
+
 from .config import *
 from .model import create_model
 from .data_loader import get_data_loaders
@@ -211,6 +214,11 @@ if __name__ == '__main__':
     print(f"Training on device {DEVICE}")
 
     history = train_model()
+
+    cleaned = {key: [float(val) for val in values] for key, values in history.items()}
+    os.makedirs("models", exist_ok=True)
+    with open("models/training_history.json", "w") as f:
+        json.dump(cleaned, f, indent=4)
 
     print("Training done!")
     print(f"Final validation accuracy: {history['val_acc'][-1]:.4f}")
