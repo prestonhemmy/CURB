@@ -1,4 +1,8 @@
+import os
 import torch
+from dotenv import load_dotenv
+
+load_dotenv()
 
 RANDOM_SEED = 42
 
@@ -23,7 +27,10 @@ PATIENCE = 3
 # file paths
 TRAIN_DATA_PATH = 'data/raw/train.csv'
 TEST_DATA_PATH = 'data/raw/test.csv'
-MODEL_PATH = 'models/checkpoints/best_model_state.pt'
+MODEL_PATH = os.getenv('MODEL_PATH', 'models/checkpoints/best_model_state.pt')
+
+HOST = os.getenv('HOST', '0.0.0.0')
+PORT = os.getenv('PORT', 8000)
 
 CLASS_NAMES = [
     'World',
