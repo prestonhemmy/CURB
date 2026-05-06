@@ -1,5 +1,10 @@
+# Language detection overrides
 *.py    linguist-language=Python
-*.html  linguistic-language=HTML
-*.js    linguistic-language=JavaScript
+*.html  linguist-language=HTML
+*.js    linguist-language=JavaScript
+
+# Mark notebooks as docs
 notebooks/*.ipynb linguist-documentation
+
+# LFS tracking
 models/checkpoints/best_model_state.pt filter=lfs diff=lfs merge=lfs -text
