@@ -122,7 +122,6 @@ class NewsClassifierService:
         if len(text) > 50000:
             raise ValueError(f"Invalid text length. Expected at most 50 000 characters, got {len(text)} .")
 
-        # TODO: Consider removing since slow?
         # language checking
         if detect(text) != "en":
             raise ValueError(f"Invalid text language. Expected English ('en'), got '{detect(text)}' .")
@@ -213,28 +212,3 @@ def predict_single_news(text, model_path):
         'sorted_predictions': sorted_predictions,
         'input_text': text[:100] + '...' if len(text) > 100 else text
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
