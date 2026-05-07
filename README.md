@@ -5,7 +5,7 @@ classification, served via a FastAPI backend. Categorizes text into **World**,
 **Sports**, **Business**, and **Science/Technology** with ~94% accuracy on 
 the AG News dataset.
 
-<!-- TODO: Add demo gif of either run_demo CLI or FastAPI-backed API -->
+![Demo](demo/demo.gif)
 
 
 ## Demo
@@ -14,21 +14,21 @@ the AG News dataset.
 # Classify a news article
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
-  -d '{"text": "Apple unveiled its latest iPhone model today, featuring groundbreaking AI capabilities..."}'
+  -d '{"text": "The stock market surged today as investors reacted to stronger than expected earnings reports from major tech companies."}'
 ```
 
 ```json
 {
-  "text": "Apple unveiled its latest iPhone model today...",
-  "category": "Science",
-  "confidence": 0.943,
+  "text": "The stock market surged today as investors reacted to stronger than expected earnings reports from m...",
+  "category": "Business",
+  "confidence": 0.9852,
   "all_probabilities": {
-    "World": 0.022,
-    "Sports": 0.003,
-    "Business": 0.032,
-    "Science": 0.943
+    "World": 0.0002,
+    "Sports": 5.44e-05,
+    "Business": 0.9852,
+    "Science": 0.0144
   },
-  "processing_time": 0.048
+  "processing_time": 0.1057
 }
 ```
 
