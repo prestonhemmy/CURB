@@ -149,6 +149,14 @@ CURB/
 
 Evaluated on the AG News test set (7,600 articles).
 
+---
+
+<div align="center">
+    <img src="assets/confusion_matrix.png" width="400" alt="Architecture model diagram">
+</div>
+
+---
+
 <table>
 <tr><th>Model Metrics</th>
 <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
@@ -184,12 +192,16 @@ Evaluated on the AG News test set (7,600 articles).
 - **Scheduler**: Linear warmup
 - **Hardware**: NVIDIA GeForce RTX 4050 (6 GB VRAM)
 
+---
+
 ![Training curves](assets/training_curves.png)
+
+---
 
 ### Evaluation
 
 ```bash
-# Per-class metrics (precision, recall, F1)
+# Per-class metrics + confusion matrix
 python -m src.evaluate
 
 # Generate training curves
