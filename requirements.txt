@@ -58,6 +58,7 @@ rignore==0.7.6
 safetensors==0.7.0
 scikit-learn==1.8.0
 scipy==1.17.1
+seaborn==0.13.2
 sentry-sdk==2.59.0
 shellingham==1.5.4
 six==1.17.0
