@@ -182,6 +182,20 @@ Evaluated on the AG News test set (7,600 articles).
 
 </td></tr> </table>
 
+### Error Analysis
+
+The primary source of classification error is the Business/Science boundary. Of 
+the 202 Science false positives, the majority are Business articles about technology 
+companies (product launches, acquisitions, software releases, and IT contracts) 
+where technology-domain vocabulary (software, data, chip, internet) causes 
+the model to predict Science despite the article's business framing. This same 
+set of misclassifications accounts for the bulk of Business's 184 false 
+negatives, meaning Science's lower precision (0.90) and Business's lower recall 
+(0.88) describe a single underlying confusion pattern. The model appears to 
+classify based on domain-specific lexical cues rather than distinguishing 
+whether an article reports on business activity within tech or describes 
+technology itself.
+
 
 ## Training Details
 
