@@ -2,6 +2,8 @@ import torch
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+
+from matplotlib.patches import Rectangle
 from sklearn.metrics import classification_report, confusion_matrix
 from transformers import BertTokenizer
 
@@ -61,9 +63,19 @@ def evaluate(output_path="assets/confusion_matrix.png"):
 
     fix, ax = plt.subplots(figsize=(8, 6))
     sns.heatmap(
-        cm, annot=True, fmt='d', cmap='PuBu',
-        xticklabels=CLASS_NAMES, yticklabels=CLASS_NAMES, ax=ax
+        cm, annot=True, fmt='d', cmap='PuBu', vmax=200,
+        xticklabels=CLASS_NAMES, yticklabels=CLASS_NAMES, ax=ax,
     )
+
+    # Highlight Business-Science mirror cells
+    ax.add_patch(Rectangle(
+        (3, 2), 1, 1, fill=False, edgecolor='gold',
+        linewidth=2.5, clip_on=False
+    ))
+    ax.add_patch(Rectangle(
+        (2, 3), 1, 1, fill=False, edgecolor='gold',
+        linewidth=2.5, clip_on=False
+    ))
 
     ax.set_xlabel('Predicted')
     ax.set_ylabel('Actual')
@@ -77,7 +89,7 @@ def evaluate(output_path="assets/confusion_matrix.png"):
 
     # Print Error Analysis
 
-    print_error_analysis(all_texts, all_targets, all_preds)
+    # print_error_analysis(all_texts, all_targets, all_preds)
 
 def print_error_analysis(texts, targets, preds, n=20):
     """
