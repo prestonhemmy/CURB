@@ -89,7 +89,7 @@ def evaluate(output_path="assets/confusion_matrix.png"):
 
     # Print Error Analysis
 
-    # print_error_analysis(all_texts, all_targets, all_preds)
+    print_error_analysis(all_texts, all_targets, all_preds)
 
 def print_error_analysis(texts, targets, preds, n=20):
     """

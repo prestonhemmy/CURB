@@ -1,4 +1,4 @@
-# CURB: A Refined BERT Implementation for Sequence Classification using PyTorch & HuggingFace
+# CURB
 
 *Classification Using Refined BERT* — a fine-tuned BERT model for news article 
 classification, served via a FastAPI backend. Categorizes text into **World**, 
